@@ -9,6 +9,7 @@ public class Meal {
     private double price;
     private Set<String> allergens;
     private List<Integer> ratings;
+    private int amountBought;
 
     public Meal(String name, double price) {
         this.name = name;
@@ -18,6 +19,7 @@ public class Meal {
         this.allergens = new HashSet<>();
         this.ratings = new ArrayList<>();
         this.tags = new HashSet<>();
+        this.amountBought = 0;
     }
     public Meal(String name, String description, Map<String, Double> nutritionalInfo,
                 double price, Set<String> allergens, Set<String> tags) {
@@ -28,6 +30,7 @@ public class Meal {
         this.allergens = allergens;
         this.ratings = new ArrayList<>();
         this.tags = tags;
+        this.amountBought = 0;
     }
 
     public double getAverageRating(){
@@ -38,6 +41,9 @@ public class Meal {
             sum += rating;
         }
         return sum / ratings.size();
+    }
+    public void addPurchase(int amount){
+        amountBought += amount;
     }
     public double getPrice() {
         return price;
@@ -53,6 +59,10 @@ public class Meal {
 
     public Set<String> getTags() {
         return tags;
+    }
+
+    public int getAmountBought() {
+        return amountBought;
     }
 
     public String getDescription() {

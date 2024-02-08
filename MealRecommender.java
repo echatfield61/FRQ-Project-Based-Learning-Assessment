@@ -3,7 +3,20 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class MealRecommender {
+    private static final double RATING_WEIGHT = 0.7;
+    private static final double PURCHASE_WEIGHT = 0.3;
+    private static final int MIN_PURCHASE_THRESHOLD = 0;
     // Recommend meals based on user preferences
+    public static List<Meal> recommendMealsBasedOnNutrition(String nutrient, List<Meal> allMeals, boolean increase) {
+        return allMeals.stream()
+                .filter(meal -> meal.getNutritionalInfo().containsKey(nutrient))
+                .sorted((meal1, meal2) -> {
+                    double nutrientAmount1 = meal1.getNutritionalInfo().get(nutrient);
+                    double nutrientAmount2 = meal2.getNutritionalInfo().get(nutrient);
+                    return increase ? Double.compare(nutrientAmount2, nutrientAmount1) : Double.compare(nutrientAmount1, nutrientAmount2);
+                })
+                .collect(Collectors.toList());
+    }
     public static List<Meal> recommendMeals(StudentAccount user, List<Meal> allMeals) {
         Set<String> userAllergies = user.getAllergies(); // Assume getAllergies() method exists in StudentAccount
 
@@ -24,6 +37,32 @@ public class MealRecommender {
                 .collect(Collectors.toList());
 
         return filteredMeals;
+    }
+
+    public static Map<Meal, Double> generateRecommendationScores(StudentAccount user, List<Meal> allMeals) {
+        Map<Meal, Double> recommendationScores = new HashMap<>();
+
+        for (Meal meal : allMeals) {
+            if (!Collections.disjoint(meal.getAllergens(), user.getAllergies())) {
+                // Skip meals containing allergens the user is allergic to
+                continue;
+            }
+
+            double score = calculateScore(meal, user);
+            recommendationScores.put(meal, score);
+        }
+
+        return recommendationScores;
+    }
+
+    private static double calculateScore(Meal meal, StudentAccount user) {
+        double userRatingScore = averagePersonalRating(meal, user.getMealRatings());
+        double purchasePenalty = meal.getAmountBought() >= MIN_PURCHASE_THRESHOLD ? 1.0 : (double) meal.getAmountBought() / MIN_PURCHASE_THRESHOLD;
+        double publicRatingScore = meal.getAverageRating();
+
+        // Calculate weighted score, adjusting for purchase frequency
+        double score = (RATING_WEIGHT * publicRatingScore + PURCHASE_WEIGHT * userRatingScore) * purchasePenalty;
+        return score;
     }
 
     public static boolean hasLowPersonalRatings(Meal meal, Map<Meal, List<Integer>> mealRatings) {

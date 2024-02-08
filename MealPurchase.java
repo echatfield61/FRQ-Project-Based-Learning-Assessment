@@ -9,14 +9,22 @@ import java.util.Set;
 public class MealPurchase {
     private final LocalDateTime purchaseDateTime;
     private Map<Meal, Integer> mealsOrdered;
+    private int servings;
 
     // Constructor
     public MealPurchase() {
         this.purchaseDateTime = LocalDateTime.now();
         this.mealsOrdered = new HashMap<>();
+        this.servings = -1;
     }
 
-    // Add a meal to the order
+    public MealPurchase(int servings) {
+        this.purchaseDateTime = LocalDateTime.now();
+        this.mealsOrdered = new HashMap<>();
+        this.servings = servings;
+    }
+
+    // Add a meal for the order
     public void addMeal(Meal meal) {
         mealsOrdered.merge(meal, 1, Integer::sum);
     }
@@ -70,5 +78,13 @@ public class MealPurchase {
 
     public int getMealQuantity(Meal meal){
         return mealsOrdered.get(meal);
+    }
+
+    public int getServings() {
+        return servings;
+    }
+
+    public void setServings(int servings) {
+        this.servings = servings;
     }
 }

@@ -12,7 +12,7 @@ public class Main {
 
         Map<String, Double> nutritionalInfoMeal2 = new HashMap<>();
         nutritionalInfoMeal2.put("Calories", 700.0);
-        nutritionalInfoMeal2.put("Protein", 25.0);
+        nutritionalInfoMeal2.put("Protein", 40.0);
 
         Map<String, Double> nutritionalInfoMeal3 = new HashMap<>();
         nutritionalInfoMeal3.put("Calories", 900.0);
@@ -27,7 +27,7 @@ public class Main {
         Set<String> allergensMeal3 = new HashSet<>();
         Set<String> tagsMeal3 = new HashSet<>(Arrays.asList("High-Protein", "Vegan"));
 
-        Meal meal1 = new Meal("Vegan Delight", "A vegan meal.",
+        Meal meal1 = new Meal("Salad", "A vegan meal.",
                 nutritionalInfoMeal1, 15.0, allergensMeal1, tagsMeal1);
         Meal meal2 = new Meal("Protein Powerhouse", "High protein meal",
                 nutritionalInfoMeal2, 20.0, allergensMeal2, tagsMeal2);
@@ -58,10 +58,7 @@ public class Main {
         newPurchase.addMeal(meal1, 1);
         newPurchase.addMeal(meal2);
         newPurchase.addMeal(meal3, 2);
-        student.addMealPurchase(newPurchase);
-        student.addMealPurchase(newPurchase);
-        student.printTransactionHistory(2);
-
-        System.out.println(MealRecommender.recommendMeals(student, menu).get(0).getName());
+        student.addMealPurchase(newPurchase, menu);
+        AccountManage students = new AccountManage(new ArrayList<>(Arrays.asList(student)));
     }
 }

@@ -97,17 +97,19 @@ public class StudentAccount {
     }
 
     // Meal history and feedback
-    public void addMealPurchase(MealPurchase purchase) {
+    public void addMealPurchase(MealPurchase purchase, List<Meal> menu) {
         if ("suspended".equals(this.accountStatus)) {
             System.out.println("This account is suspended.");
             return;
         }
         Set<Meal> meals = purchase.getAllMeals();
+        boolean hasAllergy = false;
         for (Meal meal : meals) {
             // Proceed with allergen check only if the meal has allergens and the user has allergies
             if (!meal.getAllergens().isEmpty() && !this.allergies.isEmpty()) {
                 for (String allergen : meal.getAllergens()) {
                     if (this.allergies.contains(allergen)) {
+                        hasAllergy = true;
                         System.out.println("Warning: Meal " + meal.getName() + " contains " + allergen +
                                 ", which you are allergic to. Removing this meal from your purchase.");
                         purchase.removeMeal(meal, purchase.getMealQuantity(meal)); // Adjust the method call as necessary
@@ -117,6 +119,12 @@ public class StudentAccount {
             }
         }
         double amount = purchase.calculateTotalPrice();
+        if(NutritionBalancer.balanceNutrition(this, purchase, menu, purchase.getServings()) || hasAllergy){
+            System.out.println("Would you like to reconsider your choices? Enter 1 for yes, anything else for no.");
+            int choice = Util.getInt();
+            if(choice == 1)
+                return;
+        }
         if(updateBalance(-amount) && (((amount + amountSpent) <= budgetLimit) || budgetLimit <=0)){
             amountSpent += amount;
             System.out.println(purchase.generateReceipt());
@@ -124,6 +132,7 @@ public class StudentAccount {
             transactionHistory.add(mealPurchase);
             for (Meal meal : meals){
                 if(meal != null) {
+                    meal.addPurchase(purchase.getMealQuantity(meal));
                     mealHistory.merge(meal, purchase.getMealQuantity(meal), Integer::sum);
                     System.out.println("Please rate " + meal.getName() + " from 1 to 10, or -1 for skip");
                     rateMeal(meal, Util.getInt());
