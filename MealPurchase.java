@@ -17,6 +17,9 @@ public class MealPurchase {
     }
 
     // Add a meal to the order
+    public void addMeal(Meal meal) {
+        mealsOrdered.merge(meal, 1, Integer::sum);
+    }
     public void addMeal(Meal meal, int quantity) {
         mealsOrdered.merge(meal, quantity, Integer::sum);
     }

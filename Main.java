@@ -41,7 +41,8 @@ public class Main {
 
         student.addPreference("Vegan");
         student.addAllergy("Nuts");
-
+        student.updateBalance(150);
+        student.setBudgetLimit(150);
         // Add ratings for meals
         for(int rating : new ArrayList<>(Arrays.asList(7, 8 ,9, 10, 8, 9, 7, 10)))
             meal1.addRating(rating);
@@ -51,6 +52,15 @@ public class Main {
             meal3.addRating(rating);
 
         ArrayList<Meal> menu = new ArrayList<>(Arrays.asList(meal2, meal1, meal3));
+
+        // make a new purchase
+        MealPurchase newPurchase = new MealPurchase();
+        newPurchase.addMeal(meal1, 1);
+        newPurchase.addMeal(meal2);
+        newPurchase.addMeal(meal3, 2);
+        student.addMealPurchase(newPurchase);
+        student.addMealPurchase(newPurchase);
+        student.printTransactionHistory(2);
 
         System.out.println(MealRecommender.recommendMeals(student, menu).get(0).getName());
     }

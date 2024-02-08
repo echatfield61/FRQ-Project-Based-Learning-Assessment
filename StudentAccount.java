@@ -117,7 +117,7 @@ public class StudentAccount {
             }
         }
         double amount = purchase.calculateTotalPrice();
-        if(updateBalance(-amount) && (((amount + amountSpent) < budgetLimit) || budgetLimit <=0)){
+        if(updateBalance(-amount) && (((amount + amountSpent) <= budgetLimit) || budgetLimit <=0)){
             amountSpent += amount;
             System.out.println(purchase.generateReceipt());
             Transaction mealPurchase = new Transaction(amount, purchase.generateReceipt());
@@ -125,7 +125,7 @@ public class StudentAccount {
             for (Meal meal : meals){
                 if(meal != null) {
                     mealHistory.merge(meal, purchase.getMealQuantity(meal), Integer::sum);
-                    System.out.println("Please rate " + meal.getName() + " from 1 to 10");
+                    System.out.println("Please rate " + meal.getName() + " from 1 to 10, or -1 for skip");
                     rateMeal(meal, Util.getInt());
                 }
             }
