@@ -108,7 +108,8 @@ public class StudentAccount {
             if (!meal.getAllergens().isEmpty() && !this.allergies.isEmpty()) {
                 for (String allergen : meal.getAllergens()) {
                     if (this.allergies.contains(allergen)) {
-                        System.out.println("Warning: Meal " + meal.getName() + " contains " + allergen + ", which you are allergic to. Removing this meal from your purchase.");
+                        System.out.println("Warning: Meal " + meal.getName() + " contains " + allergen +
+                                ", which you are allergic to. Removing this meal from your purchase.");
                         purchase.removeMeal(meal, purchase.getMealQuantity(meal)); // Adjust the method call as necessary
                         break; // Exit the allergen loop early since one match is enough to remove the meal
                     }
@@ -116,7 +117,7 @@ public class StudentAccount {
             }
         }
         double amount = purchase.calculateTotalPrice();
-        if(updateBalance(-amount) && ((amount + amountSpent) < budgetLimit)){
+        if(updateBalance(-amount) && (((amount + amountSpent) < budgetLimit) || budgetLimit <=0)){
             amountSpent += amount;
             System.out.println(purchase.generateReceipt());
             Transaction mealPurchase = new Transaction(amount, purchase.generateReceipt());
@@ -128,15 +129,18 @@ public class StudentAccount {
                     rateMeal(meal, Util.getInt());
                 }
             }
-
         }
         else{
             System.out.println("Not enough balance or you have reached your budget limit");
         }
     }
     public void rateMeal(Meal meal, int rating) {
-        if(0 < rating && rating < 11)
+        if(0 < rating && rating < 11) {
             meal.addRating(rating);
+            if(!myMealRatings.containsKey(meal))
+                myMealRatings.put(meal, new ArrayList<>());
+            myMealRatings.get(meal).add(rating);
+        }
     }
 
     public void printTransactionHistory(int num){
@@ -159,42 +163,86 @@ public class StudentAccount {
     }
 
     public String getName() {
+        if ("suspended".equals(this.accountStatus)) {
+            System.out.println("This account is suspended.");
+            return "";
+        }
         return name;
     }
 
     public String getStudentId() {
+        if ("suspended".equals(this.accountStatus)) {
+            System.out.println("This account is suspended.");
+            return "";
+        }
         return studentId;
     }
 
     public void setName(String name) {
+        if ("suspended".equals(this.accountStatus)) {
+            System.out.println("This account is suspended.");
+            return;
+        }
         this.name = name;
     }
 
     public String getEmail(){
+        if ("suspended".equals(this.accountStatus)) {
+            System.out.println("This account is suspended.");
+            return "";
+        }
         return email;
     }
 
     public void setEmail(String email) {
+        if ("suspended".equals(this.accountStatus)) {
+            System.out.println("This account is suspended.");
+            return;
+        }
         this.email = email;
     }
 
     public double getAmountSpent() {
+        if ("suspended".equals(this.accountStatus)) {
+            System.out.println("This account is suspended.");
+            return 0;
+        }
         return amountSpent;
     }
 
     public double getBudgetLimit() {
+        if ("suspended".equals(this.accountStatus)) {
+            System.out.println("This account is suspended.");
+            return 0;
+        }
         return budgetLimit;
     }
 
     public void setBudgetLimit(double budgetLimit) {
+        if ("suspended".equals(this.accountStatus)) {
+            System.out.println("This account is suspended.");
+            return;
+        }
         this.budgetLimit = budgetLimit;
     }
 
     public Set<String> getPreferences() {
+        if ("suspended".equals(this.accountStatus)) {
+            System.out.println("This account is suspended.");
+            return null;
+        }
         return preferences;
     }
 
     public Map<Meal, List<Integer>> getMealRatings() {
+        if ("suspended".equals(this.accountStatus)) {
+            System.out.println("This account is suspended.");
+            return null;
+        }
         return myMealRatings;
+    }
+
+    public Set<String> getAllergies() {
+        return allergies;
     }
 }

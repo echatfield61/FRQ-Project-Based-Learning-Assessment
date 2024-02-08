@@ -18,7 +18,6 @@ public class MealPurchase {
 
     // Add a meal to the order
     public void addMeal(Meal meal, int quantity) {
-        // If the meal already exists, update the quantity
         mealsOrdered.merge(meal, quantity, Integer::sum);
     }
     public void removeMeal(Meal meal, int quantity) {
