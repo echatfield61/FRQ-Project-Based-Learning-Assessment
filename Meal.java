@@ -72,8 +72,8 @@ public class Meal {
         this.description = description;
     }
 
-    public void setDietaryTags(Set<String> allergens) {
-        this.allergens = allergens;
+    public void addAllergen(String allergen) {
+        this.allergens.add(allergen);
     }
 
     public void setNutritionalInfo(Map<String, Double> nutritionalInfo) {
