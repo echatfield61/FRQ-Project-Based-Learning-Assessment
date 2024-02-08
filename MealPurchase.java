@@ -11,8 +11,8 @@ public class MealPurchase {
     private Map<Meal, Integer> mealsOrdered;
 
     // Constructor
-    public MealPurchase(LocalDateTime purchaseDateTime) {
-        this.purchaseDateTime = purchaseDateTime;
+    public MealPurchase() {
+        this.purchaseDateTime = LocalDateTime.now();
         this.mealsOrdered = new HashMap<>();
     }
 
