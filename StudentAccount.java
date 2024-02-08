@@ -106,8 +106,8 @@ public class StudentAccount {
                 for (String allergen : meal.getAllergens()) {
                     if (this.allergies.contains(allergen)) {
                         System.out.println("Warning: Meal " + meal.getName() + " contains " + allergen + ", which you are allergic to. Removing this meal from your purchase.");
-                        purchase.removeMeal(meal, purchase.getMealQuantity(meal)); // Adjust the method call as necessary
-                        break; // Exit the allergen loop early since one match is enough to remove the meal
+                        purchase.removeMeal(meal, purchase.getMealQuantity(meal)); 
+                        break;
                     }
                 }
             }
@@ -115,7 +115,7 @@ public class StudentAccount {
         double amount = purchase.calculateTotalPrice();
         if(updateBalance(-amount)){
             mealHistory.add(purchase);
-            purchase.generateReceipt();
+            System.out.println(purchase.generateReceipt());
             for (Meal meal : meals){
                 if(meal != null) {
                     System.out.println("Please rate " + meal.getName() + " from 1 to 10");
