@@ -5,6 +5,7 @@ public class Meal {
     private String name;
     private String description;
     private Map<String, Double> nutritionalInfo;
+    private Set<String> tags;
     private double price;
     private Set<String> allergens;
     private List<Integer> ratings;
@@ -16,19 +17,22 @@ public class Meal {
         this.price = price;
         this.allergens = new HashSet<>();
         this.ratings = new ArrayList<>();
+        this.tags = new HashSet<>();
     }
-    public Meal(String name, String description, Map<String, Double> nutritionalInfo, double price, Set<String> allergens) {
+    public Meal(String name, String description, Map<String, Double> nutritionalInfo,
+                double price, Set<String> allergens, Set<String> tags) {
         this.name = name;
         this.description = description;
         this.nutritionalInfo = nutritionalInfo;
         this.price = price;
         this.allergens = allergens;
         this.ratings = new ArrayList<>();
+        this.tags = tags;
     }
 
     public double getAverageRating(){
         if(ratings.size()<1)
-            return -1;
+            return 0;
         double sum = 0;
         for(int rating : ratings){
             sum += rating;
@@ -47,6 +51,10 @@ public class Meal {
         this.ratings.add(rating);
     }
 
+    public Set<String> getTags() {
+        return tags;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -57,6 +65,10 @@ public class Meal {
 
     public Set<String> getAllergens() {
         return allergens;
+    }
+
+    public void addTag(String tag){
+        tags.add(tag);
     }
 
     public void setPrice(double price) {
