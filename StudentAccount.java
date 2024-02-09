@@ -256,4 +256,8 @@ public class StudentAccount {
     public Set<String> getAllergies() {
         return allergies;
     }
+
+    public Map<Meal, Integer> getMealHistory() {
+        return mealHistory;
+    }
 }

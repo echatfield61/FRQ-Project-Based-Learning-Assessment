@@ -12,7 +12,8 @@ public class Main {
         String email = "zwan@stu.socsd.org";
         StudentAccount student = new StudentAccount(studentId, name, email);
 
-        student.addPreference("Vegan");
+        student.addPreference("Healthy");
+        student.addPreference("Italian");
         student.addAllergy("Nuts");
         student.updateBalance(1500);
         student.setBudgetLimit(150);
@@ -20,8 +21,8 @@ public class Main {
         // menuGenerator.printMenu();
         // make a new purchase
         MealPurchase newPurchase = new MealPurchase();
-        newPurchase.addMeal(menu.get(2));
-        newPurchase.addMeal(menu.get(9));
+        newPurchase.addMeal(menu.get(5));
+        newPurchase.addMeal(menu.get(1));
         student.addMealPurchase(newPurchase, menu);
         List<Meal> recommended = MealRecommender.recommendMeals(student, menu);
         for(Meal meal : recommended)

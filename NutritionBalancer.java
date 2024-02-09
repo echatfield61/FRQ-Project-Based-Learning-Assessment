@@ -7,7 +7,7 @@ public class NutritionBalancer {
     private static final double threshold = 0.1;
     private static final Map<String, Double> RECOMMENDED_INTAKES_PER_SERVING = Map.of(
             "Protein", 50.0,  // grams per serving
-            "Carbs", 100.0,
+            "Carbs", 80.0,
             "Fats", 40.0
     );
 
