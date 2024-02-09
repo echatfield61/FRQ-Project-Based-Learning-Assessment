@@ -103,6 +103,8 @@ public class StudentAccount {
             return;
         }
         Set<Meal> meals = purchase.getAllMeals();
+        if(meals == null)
+            return;
         boolean hasAllergy = false;
         for (Meal meal : meals) {
             // Proceed with allergen check only if the meal has allergens and the user has allergies

@@ -7,8 +7,8 @@ public class NutritionBalancer {
     private static final double threshold = 0.1;
     private static final Map<String, Double> RECOMMENDED_INTAKES_PER_SERVING = Map.of(
             "Protein", 50.0,  // grams per serving
-            "Carbs", 300.0,   // grams per serving
-            "Fats", 70.0      // grams per serving
+            "Carbs", 100.0,
+            "Fats", 40.0
     );
 
     public static boolean balanceNutrition(StudentAccount user, MealPurchase purchase, List<Meal> allMeals, int servings) {
@@ -32,7 +32,7 @@ public class NutritionBalancer {
                     System.out.println("Increase " + nutrient + " to meet the nutritional needs of " + estimatedServings + " servings.");
                     List<Meal> substitutes = MealRecommender.recommendMealsBasedOnNutrition(nutrient, allMeals, true).subList(0, 2);
                     System.out.print("for a healthier diet, consider replacing meals that are low in " + nutrient + " with ");
-                    substitutes = MealRecommender.recommendMeals(user, substitutes);
+                    // substitutes = MealRecommender.recommendMeals(user, substitutes);
                     for (Meal meal : substitutes)
                         System.out.print(meal.getName() + ", ");
                 } else if (totalAmount > adjustedAmount * (1 + threshold)) {
@@ -41,7 +41,7 @@ public class NutritionBalancer {
 
                     List<Meal> substitutes = MealRecommender.recommendMealsBasedOnNutrition(nutrient, allMeals, false).subList(0, 2);
                     System.out.print("for a healthier diet, consider replacing meals that are high in " + nutrient + " with ");
-                    substitutes = MealRecommender.recommendMeals(user, substitutes);
+                    // substitutes = MealRecommender.recommendMeals(user, substitutes);
                     for (Meal meal : substitutes)
                         System.out.print(meal.getName() + ", ");
                 }
