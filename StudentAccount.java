@@ -96,6 +96,7 @@ public class StudentAccount {
         this.allergies.remove(allergy);
     }
 
+    // Meal history and feedback
     public void addMealPurchase(MealPurchase purchase, List<Meal> menu) {
         if ("suspended".equals(this.accountStatus)) {
             System.out.println("This account is suspended.");
@@ -105,20 +106,22 @@ public class StudentAccount {
         if(meals == null)
             return;
         boolean hasAllergy = false;
+        Set<Meal> mealsToRemove = new HashSet<>();
         for (Meal meal : meals) {
-            // Proceed with allergen check only if the meal has allergens and the user has allergies
             if (!meal.getAllergens().isEmpty() && !this.allergies.isEmpty()) {
                 for (String allergen : meal.getAllergens()) {
                     if (this.allergies.contains(allergen)) {
                         hasAllergy = true;
                         System.out.println("Warning: Meal " + meal.getName() + " contains " + allergen +
                                 ", which you are allergic to. Removing this meal from your purchase.");
-                        purchase.removeMeal(meal, purchase.getMealQuantity(meal));
+                        mealsToRemove.add(meal);
                         break;
                     }
                 }
             }
         }
+        mealsToRemove.forEach(meal -> purchase.removeMeal(meal, purchase.getMealQuantity(meal)));
+
         double amount = purchase.calculateTotalPrice();
         if(NutritionBalancer.balanceNutrition(this, purchase, menu, purchase.getServings()) || hasAllergy){
             System.out.println("Would you like to reconsider your choices? Enter 1 for yes, anything else for no.");
