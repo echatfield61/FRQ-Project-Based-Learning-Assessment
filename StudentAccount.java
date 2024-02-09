@@ -15,12 +15,12 @@ public class StudentAccount {
     private Set<String> preferences;
     private Set<String> allergies;
 
-    // Meal History
+    //History
     private Map<Meal, Integer> mealHistory;
     private List<Transaction> transactionHistory;
 
     // Meal Ratings and Feedback
-    private Map<Meal, List<Integer>> myMealRatings; // Mapping mealId to rating
+    private Map<Meal, List<Integer>> myMealRatings;
     // budget management
     private double budgetLimit;
     private double amountSpent;
@@ -96,7 +96,6 @@ public class StudentAccount {
         this.allergies.remove(allergy);
     }
 
-    // Meal history and feedback
     public void addMealPurchase(MealPurchase purchase, List<Meal> menu) {
         if ("suspended".equals(this.accountStatus)) {
             System.out.println("This account is suspended.");
@@ -114,8 +113,8 @@ public class StudentAccount {
                         hasAllergy = true;
                         System.out.println("Warning: Meal " + meal.getName() + " contains " + allergen +
                                 ", which you are allergic to. Removing this meal from your purchase.");
-                        purchase.removeMeal(meal, purchase.getMealQuantity(meal)); // Adjust the method call as necessary
-                        break; // Exit the allergen loop early since one match is enough to remove the meal
+                        purchase.removeMeal(meal, purchase.getMealQuantity(meal));
+                        break;
                     }
                 }
             }
@@ -154,19 +153,13 @@ public class StudentAccount {
         }
     }
 
-    public void printTransactionHistory(int num){
+    public Transaction getTransactionHistory(int num){
         if ("suspended".equals(this.accountStatus)) {
             System.out.println("This account is suspended.");
-            return;
+            return null;
         }
-        for(int i = 1; i < num+1; i++){
-            System.out.println("Amount: " +
-                    transactionHistory.get(transactionHistory.size()-i).getAmount());
-            System.out.println("Date: " +
-                    transactionHistory.get(transactionHistory.size()-i).getDate());
-            System.out.println("Description: " +
-                    transactionHistory.get(transactionHistory.size()-i).getDescription());
-        }
+        return transactionHistory.get(num);
+
     }
 
     public double getBalance(){

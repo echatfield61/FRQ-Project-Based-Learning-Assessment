@@ -4,8 +4,6 @@ import java.util.stream.Collectors;
 
 public class MealRecommender {
     private static final double RATING_WEIGHT = 0.5;
-    private static final double PURCHASE_WEIGHT = 0.5;
-    private static final int MIN_PURCHASE_THRESHOLD = 0;
     private static final double POPULARITY_WEIGHT = 0.2;
     private static final double SIMILARITY_WEIGHT = 0.3;
     // Recommend meals based on user preferences
@@ -23,28 +21,19 @@ public class MealRecommender {
         Set<String> preferredTags = extractPreferredTags(user);
         Map<String, Double> preferredNutrition = extractPreferredNutrition(user);
 
-        // Calculate comprehensive scores for each meal
+        // Calculate scores for each meal
         Map<Meal, Double> mealScores = allMeals.stream().collect(Collectors.toMap(meal -> meal, meal ->
                 RATING_WEIGHT * calculatePersonalRatingScore(meal, user.getMealRatings()) +
                         POPULARITY_WEIGHT * meal.getAverageRating() +
                         SIMILARITY_WEIGHT * calculateSimilarityScore(meal, preferredTags, preferredNutrition)
         ));
 
-        // Filter out meals not meeting user's dietary restrictions and sort by calculated score
+        // Filter out meals not meeting user's allergies and sort by calculated score
         return mealScores.entrySet().stream()
-                .filter(entry -> !Collections.disjoint(entry.getKey().getTags(), user.getPreferences())) // Assumes user tags include dietary restrictions
+                .filter(entry -> !Collections.disjoint(entry.getKey().getTags(), user.getPreferences()))
                 .sorted(Map.Entry.<Meal, Double>comparingByValue().reversed())
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
-    }
-    private static double calculateScore(Meal meal, StudentAccount user) {
-        double userRatingScore = averagePersonalRating(meal, user.getMealRatings());
-        double purchasePenalty = meal.getAmountBought() >= MIN_PURCHASE_THRESHOLD ? 1.0 : (double) meal.getAmountBought() / MIN_PURCHASE_THRESHOLD;
-        double publicRatingScore = meal.getAverageRating();
-
-        // Calculate weighted score, adjusting for purchase frequency
-        double score = (RATING_WEIGHT * publicRatingScore + PURCHASE_WEIGHT * userRatingScore) * purchasePenalty;
-        return score;
     }
 
     private static double averagePersonalRating(Meal meal, Map<Meal, List<Integer>> mealRatings) {
@@ -130,8 +119,7 @@ public class MealRecommender {
     private static double calculateCompositeScore(Meal meal, Map<Meal, List<Integer>> mealRatings, Map<Meal, Integer> mealPurchaseCount) {
         double averageRating = averagePersonalRating(meal, mealRatings);
         int purchases = mealPurchaseCount.getOrDefault(meal, 0);
-        // Assuming the balance between rating and purchase count needs to be defined; adjust weights as necessary
-        return averageRating * 0.7 + purchases * 0.3; // Example weighting
+        return averageRating * 0.7 + purchases * 0.3;
     }
 }
 
