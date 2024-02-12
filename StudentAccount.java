@@ -96,7 +96,6 @@ public class StudentAccount {
         this.allergies.remove(allergy);
     }
 
-    // Meal history and feedback
     public void addMealPurchase(MealPurchase purchase, List<Meal> menu) {
         if ("suspended".equals(this.accountStatus)) {
             System.out.println("This account is suspended.");
