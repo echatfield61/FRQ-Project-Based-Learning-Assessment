@@ -104,7 +104,7 @@ public class MealRecommender {
         // Calculate and return a score based on how closely the meal's characteristics match the user's preferences
         double tagScore = calculateTagScore(meal.getTags(), preferredTags);
         double nutritionScore = calculateNutritionScore(meal.getNutritionalInfo(), preferredNutrition);
-        return tagScore + nutritionScore; // Adjust scoring logic as needed
+        return tagScore + nutritionScore;
     }
 
     public static List<Meal> getHighlyRatedMeals(Map<Meal, List<Integer>> mealRatings, Map<Meal, Integer> mealPurchaseCount) {
