@@ -8,25 +8,32 @@ public class MealRecommender {
     private static final double SIMILARITY_WEIGHT = 0.3;
     // Recommend meals based on user preferences
     public static List<Meal> recommendMealsBasedOnNutrition(String nutrient, List<Meal> allMeals, boolean increase) {
-        return allMeals.stream()
-                .filter(meal -> meal.getNutritionalInfo().containsKey(nutrient))
-                .sorted((meal1, meal2) -> {
-                    double nutrientAmount1 = meal1.getNutritionalInfo().get(nutrient);
-                    double nutrientAmount2 = meal2.getNutritionalInfo().get(nutrient);
-                    return increase ? Double.compare(nutrientAmount2, nutrientAmount1) : Double.compare(nutrientAmount1, nutrientAmount2);
-                })
-                .collect(Collectors.toList());
+        List<Meal> list = new ArrayList<>();
+        for (Meal meal : allMeals) {
+            if (meal.getNutritionalInfo().containsKey(nutrient)) {
+                list.add(meal);
+            }
+        }
+        list.sort((meal1, meal2) -> {
+            double nutrientAmount1 = meal1.getNutritionalInfo().get(nutrient);
+            double nutrientAmount2 = meal2.getNutritionalInfo().get(nutrient);
+            return increase ? Double.compare(nutrientAmount2, nutrientAmount1) : Double.compare(nutrientAmount1, nutrientAmount2);
+        });
+        return list;
     }
     public static List<Meal> recommendMeals(StudentAccount user, List<Meal> allMeals) {
         Set<String> preferredTags = extractPreferredTags(user);
         Map<String, Double> preferredNutrition = extractPreferredNutrition(user);
 
         // Calculate scores for each meal
-        Map<Meal, Double> mealScores = allMeals.stream().collect(Collectors.toMap(meal -> meal, meal ->
-                RATING_WEIGHT * calculatePersonalRatingScore(meal, user.getMealRatings()) +
-                        POPULARITY_WEIGHT * meal.getAverageRating() +
-                        SIMILARITY_WEIGHT * calculateSimilarityScore(meal, preferredTags, preferredNutrition)
-        ));
+        Map<Meal, Double> mealScores = new HashMap<>();
+        for (Meal meal : allMeals) {
+            if (mealScores.put(meal, RATING_WEIGHT * calculatePersonalRatingScore(meal, user.getMealRatings()) +
+                    POPULARITY_WEIGHT * meal.getAverageRating() +
+                    SIMILARITY_WEIGHT * calculateSimilarityScore(meal, preferredTags, preferredNutrition)) != null) {
+                throw new IllegalStateException("Duplicate key");
+            }
+        }
 
         // Filter out meals not meeting user's allergies and sort by calculated score
         return mealScores.entrySet().stream()

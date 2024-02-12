@@ -13,7 +13,7 @@ public class Main {
         StudentAccount student = new StudentAccount(studentId, name, email);
 
         student.addPreference("Healthy");
-        student.addAllergy("Nuts");
+        student.addAllergy("Gluten");
         student.updateBalance(1500);
         student.setBudgetLimit(150);
 
@@ -25,8 +25,7 @@ public class Main {
         newPurchase.addMeal(menu.get(14));
         newPurchase1.addMeal(menu.get(2));
         newPurchase1.addMeal(menu.get(3));
-        newPurchase1.addMeal(menu.get(6));
-        student.addMealPurchase(newPurchase, menu);
+        // student.addMealPurchase(newPurchase, menu);
         student.addMealPurchase(newPurchase1, menu);
         System.out.println(student.getBalance());
 
