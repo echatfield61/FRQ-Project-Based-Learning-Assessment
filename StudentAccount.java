@@ -1,13 +1,12 @@
 package dining_management;
 import java.util.*;
 
+/** @noinspection FieldMayBeFinal, */
 public class StudentAccount {
     // Basic Information
     private final String studentId;
     private String name;
     private String email;
-
-    // Account Details
     private double balance;
     private String accountStatus;
 
@@ -96,6 +95,7 @@ public class StudentAccount {
         this.allergies.remove(allergy);
     }
 
+    // Meal history and feedback
     public void addMealPurchase(MealPurchase purchase, List<Meal> menu) {
         if ("suspended".equals(this.accountStatus)) {
             System.out.println("This account is suspended.");

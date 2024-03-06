@@ -1,13 +1,16 @@
 package dining_management;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.lang.Math;
+import static dining_management.Util.*;
+
 
 public class MealRecommender {
-    private static final double RATING_WEIGHT = 0.5;
+    private static final double RATING_WEIGHT = 0.7;
     private static final double POPULARITY_WEIGHT = 0.2;
     private static final double SIMILARITY_WEIGHT = 0.3;
     // Recommend meals based on user preferences
-    public static List<Meal> recommendMealsBasedOnNutrition(String nutrient, List<Meal> allMeals, boolean increase) {
+    public static List<Meal> recommendMealsNutrition(String nutrient, List<Meal> allMeals, boolean increase) {
         List<Meal> list = new ArrayList<>();
         for (Meal meal : allMeals) {
             if (meal.getNutritionalInfo().containsKey(nutrient)) {
@@ -28,25 +31,36 @@ public class MealRecommender {
         // Calculate scores for each meal
         Map<Meal, Double> mealScores = new HashMap<>();
         for (Meal meal : allMeals) {
-            if (mealScores.put(meal, RATING_WEIGHT * calculatePersonalRatingScore(meal, user.getMealRatings()) +
-                    POPULARITY_WEIGHT * meal.getAverageRating() +
+            if (mealScores.put(meal, RATING_WEIGHT * calculatePersonalCompositeScore(meal, user.getMealRatings(), user.getMealHistory()) +
+                    POPULARITY_WEIGHT * sigmoid(meal.getAverageRating()) +
                     SIMILARITY_WEIGHT * calculateSimilarityScore(meal, preferredTags, preferredNutrition)) != null) {
                 throw new IllegalStateException("Duplicate key");
             }
         }
 
         // Filter out meals not meeting user's allergies and sort by calculated score
-        return mealScores.entrySet().stream()
-                .filter(entry -> !Collections.disjoint(entry.getKey().getTags(), user.getPreferences()))
-                .sorted(Map.Entry.<Meal, Double>comparingByValue().reversed())
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
+        for(double score : mealScores.values()){
+            System.out.println(score);
+        }
+        List<Map.Entry<Meal, Double>> toSort = new ArrayList<>();
+        for (Map.Entry<Meal, Double> entry : mealScores.entrySet()) {
+            if (!Collections.disjoint(entry.getKey().getTags(), user.getPreferences())) {
+                toSort.add(entry);
+            }
+        }
+        toSort.sort(Map.Entry.<Meal, Double>comparingByValue().reversed());
+        List<Meal> list = new ArrayList<>();
+        for (Map.Entry<Meal, Double> entry : toSort) {
+            Meal key = entry.getKey();
+            list.add(key);
+        }
+        return list;
     }
 
     private static double averagePersonalRating(Meal meal, Map<Meal, List<Integer>> mealRatings) {
         List<Integer> ratings = mealRatings.get(meal);
         if (ratings == null || ratings.isEmpty()) {
-            return 0; // Assumes 0 as default for no personal ratings
+            return meal.getAverageRating();
         }
         return ratings.stream().mapToInt(Integer::intValue).average().orElse(0);
     }
@@ -78,7 +92,7 @@ public class MealRecommender {
 
     private static double calculateTagScore(Set<String> mealTags, Set<String> preferredTags) {
         long commonTagsCount = mealTags.stream().filter(preferredTags::contains).count();
-        return (double) commonTagsCount / preferredTags.size(); // Normalize by the size of preferred tags
+        return sigmoid((double) commonTagsCount / preferredTags.size()); // Normalize by the size of preferred tags
     }
 
     private static double calculateNutritionScore(Map<String, Double> mealNutrition, Map<String, Double> preferredNutrition) {
@@ -88,23 +102,15 @@ public class MealRecommender {
             double mealValue = mealNutrition.getOrDefault(key, 0.0);
             score += Math.pow(preferredValue - mealValue, 2);
         }
-        return Math.sqrt(score); // Euclidean distance, lower score means closer match
+        return sigmoid(1 / Math.sqrt(score)); // Euclidean distance, lower score means closer match
     }
 
-    private static double calculatePersonalRatingScore(Meal meal, Map<Meal, List<Integer>> mealRatings) {
-        List<Integer> ratings = mealRatings.get(meal);
-        if (ratings == null || ratings.isEmpty()) {
-            return 0;
-        }
-        double averageRating = ratings.stream().mapToInt(Integer::intValue).average().orElse(0.0);
-        return averageRating;
-    }
 
     private static double calculateSimilarityScore(Meal meal, Set<String> preferredTags, Map<String, Double> preferredNutrition) {
         // Calculate and return a score based on how closely the meal's characteristics match the user's preferences
         double tagScore = calculateTagScore(meal.getTags(), preferredTags);
         double nutritionScore = calculateNutritionScore(meal.getNutritionalInfo(), preferredNutrition);
-        return tagScore + nutritionScore;
+        return sigmoid(tagScore + nutritionScore);
     }
 
     public static List<Meal> getHighlyRatedMeals(Map<Meal, List<Integer>> mealRatings, Map<Meal, Integer> mealPurchaseCount) {
@@ -113,8 +119,8 @@ public class MealRecommender {
         // Calculate a composite score for each meal and sort by that score
         List<Meal> sortedMeals = allMeals.stream()
                 .sorted((meal1, meal2) -> {
-                    double score1 = calculateCompositeScore(meal1, mealRatings, mealPurchaseCount);
-                    double score2 = calculateCompositeScore(meal2, mealRatings, mealPurchaseCount);
+                    double score1 = calculatePersonalCompositeScore(meal1, mealRatings, mealPurchaseCount);
+                    double score2 = calculatePersonalCompositeScore(meal2, mealRatings, mealPurchaseCount);
                     return Double.compare(score2, score1); // Descending order
                 })
                 .collect(Collectors.toList());
@@ -123,10 +129,10 @@ public class MealRecommender {
         return sortedMeals.subList(0, Math.min(sortedMeals.size(), 5));
     }
 
-    private static double calculateCompositeScore(Meal meal, Map<Meal, List<Integer>> mealRatings, Map<Meal, Integer> mealPurchaseCount) {
+    private static double calculatePersonalCompositeScore(Meal meal, Map<Meal, List<Integer>> mealRatings, Map<Meal, Integer> mealPurchaseCount) {
         double averageRating = averagePersonalRating(meal, mealRatings);
         int purchases = mealPurchaseCount.getOrDefault(meal, 0);
-        return averageRating * 0.7 + purchases * 0.3;
+        return sigmoid(averageRating * 0.8 + purchases * 0.2);
     }
 }
 

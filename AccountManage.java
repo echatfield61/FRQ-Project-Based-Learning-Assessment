@@ -16,12 +16,12 @@ public class AccountManage {
             public int compare(Meal m1, Meal m2) {
                 double score1 = calculatePopularityScore(m1);
                 double score2 = calculatePopularityScore(m2);
-                return Double.compare(score2, score1); // Descending order
+                return Double.compare(score2, score1);
             }
 
             private double calculatePopularityScore(Meal meal) {
                 double averageRating = meal.getAverageRating();
-                int purchases = meal.getAmountBought(); // Number of purchases
+                int purchases = meal.getAmountBought();
 
                 double purchasePenalty = purchases >= MIN_PURCHASE_THRESHOLD ? 1.0 : (double) purchases / MIN_PURCHASE_THRESHOLD;
                 return (RATING_WEIGHT * averageRating + PURCHASE_WEIGHT * purchases) * purchasePenalty;

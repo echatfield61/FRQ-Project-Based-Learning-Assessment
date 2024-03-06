@@ -30,7 +30,7 @@ public class NutritionBalancer {
                 if (totalAmount < adjustedAmount * (1 - threshold)) {
                     needsChange = true;
                     System.out.println("Increase " + nutrient + " to meet the nutritional needs of " + estimatedServings + " servings.");
-                    List<Meal> substitutes = MealRecommender.recommendMealsBasedOnNutrition(nutrient, allMeals, true).subList(0, 2);
+                    List<Meal> substitutes = MealRecommender.recommendMealsNutrition(nutrient, allMeals, true).subList(0, 2);
                     System.out.print("for a healthier diet, consider replacing meals that are low in " + nutrient + " with ");
                     // substitutes = MealRecommender.recommendMeals(user, substitutes);
                     for (Meal meal : substitutes)
@@ -39,7 +39,7 @@ public class NutritionBalancer {
                     needsChange = true;
                     System.out.println("Decrease " + nutrient + " to avoid exceeding the nutritional needs of " + estimatedServings + " servings.");
 
-                    List<Meal> substitutes = MealRecommender.recommendMealsBasedOnNutrition(nutrient, allMeals, false).subList(0, 2);
+                    List<Meal> substitutes = MealRecommender.recommendMealsNutrition(nutrient, allMeals, false).subList(0, 2);
                     System.out.print("for a healthier diet, consider replacing meals that are high in " + nutrient + " with ");
                     // substitutes = MealRecommender.recommendMeals(user, substitutes);
                     for (Meal meal : substitutes)
