@@ -6,7 +6,7 @@ import static dining_management.Util.*;
 
 
 public class MealRecommender {
-    private static final double RATING_WEIGHT = 0.7;
+    private static final double RATING_WEIGHT = 0.6;
     private static final double POPULARITY_WEIGHT = 0.2;
     private static final double SIMILARITY_WEIGHT = 0.3;
     // Recommend meals based on user preferences
@@ -32,19 +32,16 @@ public class MealRecommender {
         Map<Meal, Double> mealScores = new HashMap<>();
         for (Meal meal : allMeals) {
             if (mealScores.put(meal, RATING_WEIGHT * calculatePersonalCompositeScore(meal, user.getMealRatings(), user.getMealHistory()) +
-                    POPULARITY_WEIGHT * sigmoid(meal.getAverageRating()) +
+                    POPULARITY_WEIGHT * sigmoid(meal.getAverageRating()-5) +
                     SIMILARITY_WEIGHT * calculateSimilarityScore(meal, preferredTags, preferredNutrition)) != null) {
                 throw new IllegalStateException("Duplicate key");
             }
         }
 
         // Filter out meals not meeting user's allergies and sort by calculated score
-        for(double score : mealScores.values()){
-            System.out.println(score);
-        }
         List<Map.Entry<Meal, Double>> toSort = new ArrayList<>();
         for (Map.Entry<Meal, Double> entry : mealScores.entrySet()) {
-            if (!Collections.disjoint(entry.getKey().getTags(), user.getPreferences())) {
+            if (Collections.disjoint(entry.getKey().getTags(), user.getAllergies())) {
                 toSort.add(entry);
             }
         }
@@ -102,7 +99,7 @@ public class MealRecommender {
             double mealValue = mealNutrition.getOrDefault(key, 0.0);
             score += Math.pow(preferredValue - mealValue, 2);
         }
-        return sigmoid(1 / Math.sqrt(score)); // Euclidean distance, lower score means closer match
+        return sigmoid(1 / (Math.sqrt(score)-70)); // Euclidean distance, lower score means closer match
     }
 
 
@@ -130,7 +127,7 @@ public class MealRecommender {
     }
 
     private static double calculatePersonalCompositeScore(Meal meal, Map<Meal, List<Integer>> mealRatings, Map<Meal, Integer> mealPurchaseCount) {
-        double averageRating = averagePersonalRating(meal, mealRatings);
+        double averageRating = averagePersonalRating(meal, mealRatings) - 5;
         int purchases = mealPurchaseCount.getOrDefault(meal, 0);
         return sigmoid(averageRating * 0.8 + purchases * 0.2);
     }
