@@ -99,7 +99,7 @@ public class MealRecommender {
             double mealValue = mealNutrition.getOrDefault(key, 0.0);
             score += Math.pow(preferredValue - mealValue, 2);
         }
-        return sigmoid(1 / (Math.sqrt(score)-70)); // Euclidean distance, lower score means closer match
+        return sigmoid(1 / (Math.sqrt(score)-70)); 
     }
 
 
@@ -118,7 +118,7 @@ public class MealRecommender {
                 .sorted((meal1, meal2) -> {
                     double score1 = calculatePersonalCompositeScore(meal1, mealRatings, mealPurchaseCount);
                     double score2 = calculatePersonalCompositeScore(meal2, mealRatings, mealPurchaseCount);
-                    return Double.compare(score2, score1); // Descending order
+                    return Double.compare(score2, score1); 
                 })
                 .collect(Collectors.toList());
 
