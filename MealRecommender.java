@@ -122,8 +122,8 @@ public class MealRecommender {
                 })
                 .collect(Collectors.toList());
 
-        // Return the top 5 or fewer meals based on their composite scores
-        return sortedMeals.subList(0, Math.min(sortedMeals.size(), 5));
+        // Return the top 10 or fewer meals based on their composite scores
+        return sortedMeals.subList(0, Math.min(sortedMeals.size(), 10));
     }
 
     private static double calculatePersonalCompositeScore(Meal meal, Map<Meal, List<Integer>> mealRatings, Map<Meal, Integer> mealPurchaseCount) {

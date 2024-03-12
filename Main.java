@@ -12,6 +12,7 @@ public class Main {
         String email = "zwan@stu.socsd.org";
         StudentAccount student = new StudentAccount(studentId, name, email);
 
+        student.addPreference("Italian");
         student.addPreference("Healthy");
         // student.addAllergy("Gluten");
         student.updateBalance(1500);
@@ -26,14 +27,16 @@ public class Main {
         newPurchase1.addMeal(menu.get(2));
         newPurchase1.addMeal(menu.get(3));
         student.addMealPurchase(newPurchase, menu);
-        // student.addMealPurchase(newPurchase1, menu);
+        student.addMealPurchase(newPurchase1, menu);
         System.out.println("Your Balance:");
         System.out.println(student.getBalance());
 
         System.out.println("Here are some meals recommended for you:");
         List<Meal> recommended = MealRecommender.recommendMeals(student, menu);
-        for(Meal meal : recommended)
+        for(int i = 0; i < 5; i++) {
+            Meal meal = recommended.get(i);
             System.out.println(meal.getName());
+        }
         AccountManage students = new AccountManage(new ArrayList<>(List.of(student)));
         System.out.println("\nMost popular meals:");
         for(int i = 0; i < 3; i++) System.out.println(students.mostPopularDishes(menu).get(i).getName());
