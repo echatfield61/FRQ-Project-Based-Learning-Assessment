@@ -32,7 +32,7 @@ public class NutritionBalancer {
                     System.out.println("Increase " + nutrient + " to meet the nutritional needs of " + estimatedServings + " servings.");
                     List<Meal> substitutes = MealRecommender.recommendMealsNutrition(nutrient, allMeals, true).subList(0, 2);
                     System.out.print("for a healthier diet, consider replacing meals that are low in " + nutrient + " with ");
-                    // substitutes = MealRecommender.recommendMeals(user, substitutes);
+                    substitutes = MealRecommender.recommendMeals(user, substitutes);
                     for (Meal meal : substitutes)
                         System.out.print(meal.getName() + ", ");
                 } else if (totalAmount > adjustedAmount * (1 + threshold)) {
@@ -41,7 +41,7 @@ public class NutritionBalancer {
 
                     List<Meal> substitutes = MealRecommender.recommendMealsNutrition(nutrient, allMeals, false).subList(0, 2);
                     System.out.print("for a healthier diet, consider replacing meals that are high in " + nutrient + " with ");
-                    // substitutes = MealRecommender.recommendMeals(user, substitutes);
+                    substitutes = MealRecommender.recommendMeals(user, substitutes);
                     for (Meal meal : substitutes)
                         System.out.print(meal.getName() + ", ");
                 }

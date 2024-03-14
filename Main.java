@@ -13,7 +13,7 @@ public class Main {
         StudentAccount student = new StudentAccount(studentId, name, email);
 
         student.addPreference("Italian");
-        student.addPreference("Healthy");
+        // student.addPreference("Healthy");
         // student.addAllergy("Gluten");
         student.updateBalance(1500);
         student.setBudgetLimit(150);
